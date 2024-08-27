@@ -42,6 +42,8 @@ private:
   int              m_current_frame = 0;
   int              m_running       = true;
   std::string      config;
+  int              m_last_shape_spawn;
+  uint16_t         m_shape_count = 0;
 
   Status dv_init();
 
@@ -50,6 +52,8 @@ private:
   void s_movement();
   void s_render();
   void s_collision();
+  void s_collision_spawner_checker();
+  void s_shape_spawner();
 
   // Systems Helpers
   void spawn_shape();

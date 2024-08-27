@@ -15,9 +15,12 @@ Status Dellview::run()
   if (status)
     return status;
 
+  spawn_shape();
+
   while (m_running)
   {
     m_entities.update();
+    s_shape_spawner();
     s_movement();
     s_collision();
     s_input();
@@ -32,17 +35,16 @@ Status Dellview::run()
 Status Dellview::dv_init()
 {
   Status status = this->read_config();
-  if (status)
-    return status;
-
-  spawn_shape();
-
   return status;
 }
 
 void Dellview::s_movement()
 {
   // todo
+  // for (auto e : m_entities.get_entities())
+  // {
+  //   e->cTransform->pos += e->cTransform->vel;
+  // }
 }
 
 void Dellview::s_render()
@@ -50,12 +52,20 @@ void Dellview::s_render()
   m_window.clear();
   for (auto e : m_entities.get_entities())
   {
-    // todo
+    e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
+    e->cTransform->angle += 1.0f;
+    e->cShape->circle.setRotation(e->cTransform->angle);
+    m_window.draw(e->cShape->circle);
   }
   m_window.display();
 }
 
 void Dellview::s_collision()
+{
+  // todo
+}
+
+void Dellview::s_collision_spawner_checker()
 {
   // todo
 }
@@ -72,9 +82,35 @@ void Dellview::s_input()
   }
 }
 
+void Dellview::s_shape_spawner()
+{
+  if ((m_current_frame - m_last_shape_spawn) == 20 && m_shape_count < m_shape_config.MS)
+  {
+    spawn_shape();
+    m_shape_count++;
+  }
+}
+
 void Dellview::spawn_shape()
 {
-  // todo
+  auto entity = m_entities.add_entity(CIRCLE);
+
+  float ex  = (rand() % ((m_window.getSize().x - m_shape_config.SR) - m_shape_config.SR + 1));
+  float ey  = (rand() % ((m_window.getSize().y - m_shape_config.SR) - m_shape_config.SR + 1));
+  ex       += m_shape_config.SR;
+  ey       += m_shape_config.SR;
+
+  Vec2 pos{ex, ey};
+  Vec2 vel{0, 0};
+
+  sf::Color color  = sf::Color(m_shape_config.FR, m_shape_config.FB, m_shape_config.FG);
+  sf::Color color2 = sf::Color(m_shape_config.OR, m_shape_config.OB, m_shape_config.OG);
+
+  entity->cTransform = std::make_shared<CTransform>(pos, vel, 0.0f);
+  entity->cShape     = std::make_shared<CShape>(m_shape_config.SR, m_shape_config.V, color, color2,
+                                                m_shape_config.OT);
+
+  m_last_shape_spawn = m_current_frame;
 }
 
 Status Dellview::read_config()
@@ -141,7 +177,10 @@ void Dellview::process_window_config(std::vector<std::string> &tokens)
   int height    = std::stoi(tokens.at(2));
   int framerate = std::stoi(tokens.at(3));
 
-  m_window.create(sf::VideoMode(width, height), "dellview");
+  sf::ContextSettings settings;
+  settings.antialiasingLevel = 8;
+
+  m_window.create(sf::VideoMode(width, height), "dellview", sf::Style::Default, settings);
   m_window.setFramerateLimit(framerate);
 }
 

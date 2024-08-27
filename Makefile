@@ -1,14 +1,14 @@
-CXX 			:= g++
-TARGET 		:= dellview
-SFML_DIR 	:= /opt/homebrew/Cellar/sfml/2.6.1
+CXX       := g++
+TARGET    := dellview
+SFML_DIR  := /opt/homebrew/Cellar/sfml/2.6.1
 
 CXX_FLAGS := -std=c++17 -O3 -Wall -Wextra -Wunreachable-code
-INCLUDES 	:= -I./src -I$(SFML_DIR)/include
-LDFLAGS 	:= -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system -L$(SFML_DIR)/lib -O3
+INCLUDES  := -I./src -I$(SFML_DIR)/include
+LDFLAGS   := -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system -L$(SFML_DIR)/lib -O3
 
-TGTDIR 		:= bin
-SRCDIR 		:= src
-OBJDIR		:= obj
+TGTDIR    := bin
+SRCDIR    := src
+OBJDIR    := obj
 SRC_FILES := $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJ_FILES := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SRC_FILES:.cpp=.o))
 

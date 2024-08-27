@@ -6,7 +6,7 @@ struct CShape
 {
   sf::CircleShape circle;
 
-  CShape(float radius, int points, const sf::Color &fill, sf::Color &outline, float thickness)
+  CShape(float radius, int points, sf::Color &fill, sf::Color &outline, float thickness)
       : circle(radius, points)
   {
     circle.setFillColor(fill);
